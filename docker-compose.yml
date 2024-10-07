@@ -1,11 +1,35 @@
+# docker-compose.yml
+
 version: '3.8'
 
 services:
   h2-console:
-    build: .  # Indica que Docker debe construir la imagen usando el Dockerfile en el directorio actual
+    build:
+      context: .
+      dockerfile: Dockerfile.h2
     container_name: h2-console
     ports:
-      - "8085:8085"  # Host:Contenedor (Consola Web)
-      - "9095:9095"  # Host:Contenedor (Servidor TCP)
+      - "8085:8085"  # Consola Web de H2
+      - "9095:9095"  # Servidor TCP de H2
     volumes:
-      - ./data:/opt/h2-data  # Monta la carpeta local 'data' en el contenedor para persistencia de datos
+      - ./data:/opt/h2-data  # Persistencia de datos
+    environment:
+      - H2_OPTIONS=-tcpAllowOthers -webAllowOthers -ifNotExists
+
+  tomcat:
+    build:
+      context: .
+      dockerfile: Dockerfile.tomcat
+    container_name: tomcat-server
+    ports:
+      - "8080:8080"  # Servidor Tomcat
+    volumes:
+      - ./webapps:/usr/local/tomcat/webapps  # Despliegue de aplicaciones WAR
+    depends_on:
+      - h2-console
+
+
+
+
+
+
