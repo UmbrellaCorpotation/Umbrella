@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TipoDatoRepository extends JpaRepository<TipoDato, Integer> {
+public interface TipoDatoRepository extends JpaRepository<TipoDato, Long> {
     // Métodos de consulta personalizados si es necesario
 }

@@ -1,17 +1,8 @@
-version: '3.8'
-
 services:
-  spring-boot-app:
-    build:
-      context: .
-    container_name: spring-boot-app
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_DATABASE=Umbrella
+      - MYSQL_ROOT_PASSWORD=P4ssword!
     ports:
-      - "8080:8080"  # El puerto en el que la aplicación estará disponible
-    volumes:
-      - ./target:/app  # Asegúrate de que tu archivo JAR esté en ./target
-    networks:
-      - umbrella-network
-
-networks:
-  umbrella-network:
-    driver: bridge
+      - 3307:3306
