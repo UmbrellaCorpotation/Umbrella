@@ -1,11 +1,17 @@
 version: '3.8'
 
 services:
-  h2-console:
-    build: .  # Indica que Docker debe construir la imagen usando el Dockerfile en el directorio actual
-    container_name: h2-console
+  spring-boot-app:
+    build:
+      context: .
+    container_name: spring-boot-app
     ports:
-      - "8085:8085"  # Host:Contenedor (Consola Web)
-      - "9095:9095"  # Host:Contenedor (Servidor TCP)
+      - "8080:8080"  # El puerto en el que la aplicación estará disponible
     volumes:
-      - ./data:/opt/h2-data  # Monta la carpeta local 'data' en el contenedor para persistencia de datos
+      - ./target:/app  # Asegúrate de que tu archivo JAR esté en ./target
+    networks:
+      - umbrella-network
+
+networks:
+  umbrella-network:
+    driver: bridge
