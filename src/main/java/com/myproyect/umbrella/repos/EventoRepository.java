@@ -1,4 +1,4 @@
-package com.myproyect.umbrella.repository;
+package com.myproyect.umbrella.repos;
 
 import com.myproyect.umbrella.model.Evento;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-package com.myproyect.umbrella.repository;
+package com.myproyect.umbrella.repos;
 
 
 

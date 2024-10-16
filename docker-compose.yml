@@ -1,35 +1,17 @@
-# docker-compose.yml
-
 version: '3.8'
 
 services:
-  h2-console:
+  spring-boot-app:
     build:
       context: .
-      dockerfile: Dockerfile.h2
-    container_name: h2-console
+    container_name: spring-boot-app
     ports:
-      - "8085:8085"  # Consola Web de H2
-      - "9095:9095"  # Servidor TCP de H2
+      - "8080:8080"  # El puerto en el que la aplicación estará disponible
     volumes:
-      - ./data:/opt/h2-data  # Persistencia de datos
-    environment:
-      - H2_OPTIONS=-tcpAllowOthers -webAllowOthers -ifNotExists
+      - ./target:/app  # Asegúrate de que tu archivo JAR esté en ./target
+    networks:
+      - umbrella-network
 
-  tomcat:
-    build:
-      context: .
-      dockerfile: Dockerfile.tomcat
-    container_name: tomcat-server
-    ports:
-      - "8080:8080"  # Servidor Tomcat
-    volumes:
-      - ./webapps:/usr/local/tomcat/webapps  # Despliegue de aplicaciones WAR
-    depends_on:
-      - h2-console
-
-
-
-
-
-
+networks:
+  umbrella-network:
+    driver: bridge

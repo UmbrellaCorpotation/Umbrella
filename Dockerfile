@@ -1,25 +1,14 @@
-# Usar una imagen base de OpenJDK
-FROM openjdk:17-jdk-alpine
+# Usar la imagen oficial de Tomcat
+FROM tomcat:9.0.95-jdk17-temurin-jammy
 
-# Variables de entorno para H2
-ENV H2_VERSION=2.1.214
-ENV H2_HOME=/opt/h2
-ENV PATH=$H2_HOME/bin:$PATH
+# Eliminar la aplicación web predeterminada (opcional)
+RUN rm -rf /usr/local/tomcat/webapps/ROOT
 
-# Instalar wget, descargar H2 JAR, y limpiar
-RUN apk add --no-cache wget && \
-    mkdir -p $H2_HOME/bin && \
-    wget -O /tmp/h2.jar https://repo1.maven.org/maven2/com/h2database/h2/$H2_VERSION/h2-$H2_VERSION.jar && \
-    cp /tmp/h2.jar $H2_HOME/bin/h2-$H2_VERSION.jar && \
-    rm /tmp/h2.jar && \
-    apk del wget
+# Copiar el archivo WAR generado al directorio de webapps de Tomcat
+COPY ./target/data-analysis-system-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
 
-# Establecer el directorio de trabajo
-WORKDIR /opt/h2/bin
+# Exponer el puerto 8080
+EXPOSE 8080
 
-# Exponer los puertos necesarios
-EXPOSE 8085 9095
-
-# Comando para iniciar H2 con los puertos deseados y permitir la creación remota de bases de datos
-CMD ["java", "-cp", "h2-2.1.214.jar", "org.h2.tools.Server", "-tcpPort", "9095", "-tcpAllowOthers", "-webPort", "8085", "-webAllowOthers", "-ifNotExists"]
-
+# Comando para iniciar Tomcat
+CMD ["catalina.sh", "run"]

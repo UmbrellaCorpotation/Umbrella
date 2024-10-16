@@ -1,6 +1,6 @@
 package com.myproyect.umbrella.model;
 
-
+import com.myproyect.umbrella.domain.Muestra;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;

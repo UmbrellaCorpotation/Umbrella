@@ -3,7 +3,7 @@ package com.myproyect.umbrella.service;
 
 
 import com.myproyect.umbrella.model.Evento;
-import com.myproyect.umbrella.repository.EventoRepository;
+import com.myproyect.umbrella.repos.EventoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
