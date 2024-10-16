@@ -10,7 +10,8 @@ import lombok.Data;
 public class TipoDato {
 
     @Id
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "nombre", nullable = false, unique = true)
     private String nombre;
