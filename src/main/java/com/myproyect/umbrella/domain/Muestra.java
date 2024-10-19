@@ -1,12 +1,10 @@
 package com.myproyect.umbrella.domain;
 
-
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -17,14 +15,11 @@ public abstract class Muestra {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column
-    private Date fechaObtencion;
-    @Column
-    private String origen;
-    @Column
-    private String descripcion;
+    private OffsetDateTime fechaObtencion;
 
-
-
-
+    @ManyToOne
+    @JoinColumn(name = "grupomuestras_id")
+    private GrupoMuestras grupoMuestras;
 }

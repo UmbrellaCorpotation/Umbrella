@@ -1,18 +1,19 @@
 package com.myproyect.umbrella.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
+import com.myproyect.umbrella.domain.Muestra;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class DatoBioquimicoDTO {
+public class DatoBioquimicoDTO extends Muestra{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String compuestoQuimico;
-    private Double concentracion;
+    private String name;
+    private String category;
+    private String dosageForm;
+    private String strength;
+    private String manufacturer;
+    private String indication;
+    private String classification;
 }

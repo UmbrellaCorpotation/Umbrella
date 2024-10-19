@@ -1,23 +1,17 @@
 package com.myproyect.umbrella.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
+import com.myproyect.umbrella.domain.GrupoMuestras;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
 public class MuestraDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date fechaObtencion;
-    private String origen;
-    private String descripcion;
-    private String tipo; // Puede ser "genetica", "bioquimica", "fisica"
-
+    private OffsetDateTime fechaObtencion;
+    private GrupoMuestras grupoMuestras;
 }
