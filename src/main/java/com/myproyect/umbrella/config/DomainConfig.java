@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EntityScan({"com.myproyect.umbrella.domain", "com.myproyect.umbrella.model"})  // Escanea múltiples paquetes de entidades
+@EntityScan("com.myproyect.umbrella.domain")  // Escanea múltiples paquetes de entidades
 @EnableJpaRepositories("com.myproyect.umbrella.repos") // Ruta de tus repositorios
 @EnableTransactionManagement
 @EnableJpaAuditing(dateTimeProviderRef = "auditingDateTimeProvider")

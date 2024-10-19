@@ -33,13 +33,6 @@ public class DatoBioquimicoService {
         datoBioquimicoRepository.deleteById(id);
     }
 
-    // Buscar datos bioquímicos por compuesto químico
-    public List<DatoBioquimico> getDatosBioquimicosPorCompuesto(String compuestoQuimico) {
-        return datoBioquimicoRepository.findByCompuestoQuimico(compuestoQuimico);
-    }
 
-    // Buscar datos bioquímicos por concentración
-    public List<DatoBioquimico> getDatosBioquimicosPorConcentracion(Double minConcentracion, Double maxConcentracion) {
-        return datoBioquimicoRepository.findByConcentracionBetween(minConcentracion, maxConcentracion);
-    }
+
 }

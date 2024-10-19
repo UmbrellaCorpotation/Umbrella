@@ -1,19 +1,27 @@
 package com.myproyect.umbrella.domain;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@EntityListeners(DatoBioquimico.class)
 @Getter
 @Setter
-@Table(name = "DatoBioquimicoD")
 public class DatoBioquimico extends Muestra {
 
-    private String compuestoQuimico;
-    private Double concentracion;
+    @Id
+    private Long id;
+    private String name;
+    private String category;
+    private String dosageForm;
+    private String strength;
+    private String manufacturer;
+    private String indication;
+    private String classification;
 
-    // Getters y setters
+
+
+    // Getters y Setters
 }

@@ -6,9 +6,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
-@Entity
+
+@EntityListeners(Muestra.class)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
@@ -18,11 +19,11 @@ public abstract class Muestra {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
-    private Date fechaObtencion;
-    @Column
-    private String origen;
-    @Column
-    private String descripcion;
+    private OffsetDateTime fechaObtencion;
+    @ManyToOne
+    @JoinColumn(name="grupomuestras_id")
+    private GrupoMuestras grupoMuestras;
+
 
 
 

@@ -1,56 +1,87 @@
 package com.myproyect.umbrella.service;
 
-import com.myproyect.umbrella.domain.Muestra;
-import com.myproyect.umbrella.repos.MuestraRepository;
+import com.myproyect.umbrella.domain.DatoBioquimico;
+import com.myproyect.umbrella.repos.DatoBioquimicoRepository;
+import com.myproyect.umbrella.util.MuestraNotFoundException;
+import com.myproyect.umbrella.model.DatoBioquimicoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MuestraService {
 
-    @Autowired
-    private MuestraRepository muestraRepository;
+    private final DatoBioquimicoRepository datoBioquimicoRepository;
 
-    // Obtener todas las muestras
-    public List<Muestra> getAllMuestras() {
-        return muestraRepository.findAll();
+    @Autowired
+    public MuestraService(DatoBioquimicoRepository datoBioquimicoRepository) {
+        this.datoBioquimicoRepository = datoBioquimicoRepository;
     }
 
-    // Obtener una muestra por ID
-    public Muestra getMuestraById(Long id) {
-        return muestraRepository.findById(id).orElse(null);
+    // Obtener una muestra específica por ID
+    public DatoBioquimicoDTO get(Long id) {
+        Optional<DatoBioquimico> datoBioquimico = datoBioquimicoRepository.findById(id);
+        if (datoBioquimico.isPresent()) {
+            return bioquimicoToDTO(datoBioquimico.get());
+        }
+        throw new MuestraNotFoundException(id);
     }
 
     // Crear una nueva muestra
-    public Muestra createMuestra(Muestra muestra) {
-        return muestraRepository.save(muestra);
+    @Transactional
+    public Long create(DatoBioquimicoDTO muestraDTO) {
+        DatoBioquimico muestra = dtoToBioquimico(muestraDTO);
+        DatoBioquimico savedMuestra = datoBioquimicoRepository.save(muestra);
+        return savedMuestra.getId();
     }
 
-    // Eliminar una muestra por ID
-    public void deleteMuestra(Long id) {
-        muestraRepository.deleteById(id);
+    // Actualizar una muestra existente
+    @Transactional
+    public void update(Long id, DatoBioquimicoDTO muestraDTO) {
+        DatoBioquimico existingMuestra = datoBioquimicoRepository.findById(id)
+                .orElseThrow(() -> new MuestraNotFoundException(id));
+        DatoBioquimico updatedMuestra = dtoToBioquimico(muestraDTO);
+        updatedMuestra.setId(existingMuestra.getId());
+        datoBioquimicoRepository.save(updatedMuestra);
     }
 
-    // Buscar muestras por origen
-    public List<Muestra> getMuestrasPorOrigen(String origen) {
-        return muestraRepository.findByOrigen(origen);
+    // Eliminar una muestra por su ID
+    @Transactional
+    public void delete(Long id) {
+        boolean existsInBioquimico = datoBioquimicoRepository.existsById(id);
+        if (existsInBioquimico) {
+            datoBioquimicoRepository.deleteById(id);
+        } else {
+            throw new MuestraNotFoundException(id);
+        }
     }
 
-    // Buscar muestras obtenidas en una fecha específica
-    public List<Muestra> getMuestrasPorFecha(Date fechaObtencion) {
-        return muestraRepository.findByFechaObtencion(fechaObtencion);
+    // Métodos auxiliares para mapear entre entidades y DTOs
+
+    private DatoBioquimicoDTO bioquimicoToDTO(DatoBioquimico muestra) {
+        DatoBioquimicoDTO dto = new DatoBioquimicoDTO();
+        dto.setId(muestra.getId());
+        dto.setName(muestra.getName());
+        dto.setCategory(muestra.getCategory());
+        dto.setDosageForm(muestra.getDosageForm());
+        dto.setStrength(muestra.getStrength());
+        dto.setManufacturer(muestra.getManufacturer());
+        dto.setIndication(muestra.getIndication());
+        dto.setClassification(muestra.getClassification());
+        return dto;
     }
 
-    // Buscar muestras cuya descripción contiene una palabra clave
-    public List<Muestra> buscarMuestrasPorDescripcion(String keyword) {
-        return muestraRepository.findByDescripcionContaining(keyword);
-    }
-
-    // Buscar muestras obtenidas entre dos fechas
-    public List<Muestra> getMuestrasEntreFechas(Date startDate, Date endDate) {
-        return muestraRepository.findByFechaObtencionBetween(startDate, endDate);
+    private DatoBioquimico dtoToBioquimico(DatoBioquimicoDTO dto) {
+        DatoBioquimico muestra = new DatoBioquimico();
+        muestra.setName(dto.getName());
+        muestra.setCategory(dto.getCategory());
+        muestra.setDosageForm(dto.getDosageForm());
+        muestra.setStrength(dto.getStrength());
+        muestra.setManufacturer(dto.getManufacturer());
+        muestra.setIndication(dto.getIndication());
+        muestra.setClassification(dto.getClassification());
+        return muestra;
     }
 }
