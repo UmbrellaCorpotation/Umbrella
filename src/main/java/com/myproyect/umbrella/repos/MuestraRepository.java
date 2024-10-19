@@ -13,15 +13,15 @@ import java.util.List;
 public interface MuestraRepository extends JpaRepository<Muestra, Long> {
 
     // Encuentra todas las muestras por su origen
-    List<Muestra> findByOrigen(String origen);
+//    List<Muestra> findByOrigen(String origen);
 
     // Encuentra todas las muestras obtenidas en una fecha específica
-    List<Muestra> findByFechaObtencion(Date fechaObtencion);
+  //  List<Muestra> findByFechaObtencion(Date fechaObtencion);
 
     // Encuentra todas las muestras cuya descripción contenga una palabra clave
-    List<Muestra> findByDescripcionContaining(String keyword);
+   // List<Muestra> findByDescripcionContaining(String keyword);
 
     // Encuentra todas las muestras obtenidas entre dos fechas
-    List<Muestra> findByFechaObtencionBetween(Date startDate, Date endDate);
+   // List<Muestra> findByFechaObtencionBetween(Date startDate, Date endDate);
 
 }

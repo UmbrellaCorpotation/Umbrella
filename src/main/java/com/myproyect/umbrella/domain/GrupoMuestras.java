@@ -6,15 +6,16 @@ import lombok.Setter;
 
 import java.util.List;
 
-
-@EntityListeners(GrupoMuestras.class)
+@Entity
 @Getter
 @Setter
-@Table(name="GrupoMuestrasD")
+@Table(name = "GrupoMuestrasD")
 public class GrupoMuestras {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "GrupoMUestras", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "grupoMuestras", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Muestra> muestras;
 }

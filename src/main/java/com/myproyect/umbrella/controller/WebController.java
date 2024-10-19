@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/")
+
 public class WebController {
-    @GetMapping
+
+    @GetMapping("/web")  // Cambia la ruta a "/web"
     public String index() {
         return "index";
     }
 }
-
 
