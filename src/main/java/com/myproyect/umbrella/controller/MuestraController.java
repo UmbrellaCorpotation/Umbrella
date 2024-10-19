@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 @RestController
-@RequestMapping("/muestras")
+@RequestMapping("/api/muestra")
 public class MuestraController {
 
     @Autowired
@@ -96,5 +96,11 @@ public class MuestraController {
     public ResponseEntity<Void> procesarYAgruparMuestras() {
         muestraService.procesarYAgruparMuestras();
         return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping("/{tipo}/all")
+    public ResponseEntity<List<DatoBioquimicoDTO>> getAllMuestras(@PathVariable String tipo) {
+        List<DatoBioquimicoDTO> muestrasDTO = muestraService.getAll(tipo);
+        return ResponseEntity.ok(muestrasDTO);
     }
 }

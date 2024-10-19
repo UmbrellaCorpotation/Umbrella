@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -22,4 +23,6 @@ public abstract class Muestra {
     @ManyToOne
     @JoinColumn(name = "grupomuestras_id")
     private GrupoMuestras grupoMuestras;
+
+
 }

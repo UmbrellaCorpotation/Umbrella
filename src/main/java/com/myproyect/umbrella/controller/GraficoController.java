@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 @RestController
-@RequestMapping("/graficos")
+@RequestMapping("/api/graficos")
 public class GraficoController {
 
     @Autowired
