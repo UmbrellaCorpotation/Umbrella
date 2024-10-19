@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MuestraService {
@@ -71,6 +73,14 @@ public class MuestraService {
         dto.setIndication(muestra.getIndication());
         dto.setClassification(muestra.getClassification());
         return dto;
+    }
+
+    @Transactional
+    public void createAll(List<DatoBioquimicoDTO> muestrasDTO) {
+        List<DatoBioquimico> muestras = muestrasDTO.stream()
+                .map(this::dtoToBioquimico)
+                .collect(Collectors.toList());
+        datoBioquimicoRepository.saveAll(muestras);
     }
 
     private DatoBioquimico dtoToBioquimico(DatoBioquimicoDTO dto) {
