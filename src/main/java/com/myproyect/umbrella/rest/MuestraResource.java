@@ -25,32 +25,38 @@ public class MuestraResource {
         return ResponseEntity.ok(muestraService.get(id));
     }
 
-    @PostMapping
+    @PostMapping("/{tipo}")
     @ApiResponse(responseCode = "201", description = "Crear una nueva muestra")
-    public ResponseEntity<Long> createMuestra(@RequestBody final DatoBioquimicoDTO muestraDTO) {
-        final Long createdId = muestraService.create(muestraDTO);
+    public ResponseEntity<Long> createMuestra(@PathVariable String tipo,
+                                              @RequestBody final DatoBioquimicoDTO muestraDTO) {
+        final Long createdId = muestraService.create(muestraDTO, tipo);
         return new ResponseEntity<>(createdId, HttpStatus.CREATED);
     }
 
-    @PostMapping("/batch")
+    @PostMapping("/batch/{tipo}")
     @ApiResponse(responseCode = "201", description = "Crear nuevas muestras en lote")
-    public ResponseEntity<Void> createMuestrasBatch(@RequestBody List<DatoBioquimicoDTO> muestrasDTO) {
-        muestraService.createAll(muestrasDTO);
+    public ResponseEntity<Void> createMuestrasBatch(@PathVariable String tipo,
+                                                    @RequestBody List<DatoBioquimicoDTO> muestrasDTO) {
+        muestraService.createAll(muestrasDTO, tipo);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/{tipo}")
     @ApiResponse(responseCode = "200", description = "Actualizar una muestra existente")
     public ResponseEntity<Void> updateMuestra(@PathVariable final Long id,
+                                              @PathVariable String tipo,
                                               @RequestBody final DatoBioquimicoDTO muestraDTO) {
-        muestraService.update(id, muestraDTO);
+        muestraService.update(id, muestraDTO, tipo);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/{tipo}")
     @ApiResponse(responseCode = "204", description = "Eliminar una muestra")
-    public ResponseEntity<Void> deleteMuestra(@PathVariable final Long id) {
-        muestraService.delete(id);
+    public ResponseEntity<Void> deleteMuestra(@PathVariable final Long id,
+                                              @PathVariable String tipo) {
+        muestraService.delete(id, tipo);
         return ResponseEntity.noContent().build();
     }
+
 }
+
