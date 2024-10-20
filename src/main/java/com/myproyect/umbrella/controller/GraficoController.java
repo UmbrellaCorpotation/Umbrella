@@ -63,7 +63,7 @@ public class GraficoController {
     /**
      * Obtener todos los gráficos.
      */
-    @GetMapping
+    @GetMapping("/obtener")
     public ResponseEntity<List<GraficoDTO>> getAllGraficos() {
         List<GraficoDTO> graficos = graficoService.getAllGraficos();
         return ResponseEntity.ok(graficos);

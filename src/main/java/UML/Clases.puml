@@ -1,0 +1,106 @@
+@startuml
+package "com.myproyect.umbrella.controller" {
+    class GraficoController {
+        + getGrafico(id: Long)
+        + createGrafico(graficoDTO: GraficoDTO)
+        + updateGrafico(id: Long, graficoDTO: GraficoDTO)
+        + deleteGrafico(id: Long)
+        + getAllGraficos()
+        + procesarGraficos()
+    }
+    class HomeController {}
+    class HtmxErrorController {}
+    class MuestraController {
+        + getAllMuestras(tipo: String)
+        + createMuestra(muestraDTO: MuestraDTO)
+        + agruparMuestras()
+    }
+    class WebController {}
+}
+
+package "com.myproyect.umbrella.domain" {
+    class DatoBioquimico {
+        + id: Long
+        + name: String
+        + category: String
+        + dosageForm: String
+        + strength: String
+        + manufacturer: String
+        + indication: String
+        + classification: String
+    }
+    class Grafico {
+        + id: Long
+        + datosProcesados: Map<String, Double>
+        + grupoMuestrasId: Long
+    }
+    class GrupoMuestras {
+        + id: Long
+        + muestras: List<Muestra>
+    }
+    class Muestra {
+        + id: Long
+        + datoBioquimico: DatoBioquimico
+        + grupoMuestras: GrupoMuestras
+    }
+}
+
+package "com.myproyect.umbrella.model" {
+    class DatoBioquimicoDTO {}
+    class GraficoDTO {}
+    class GrupoMuestrasDTO {}
+    class MuestraDTO {}
+}
+
+package "com.myproyect.umbrella.repos" {
+    interface DatoBioquimicoRepository {
+        + findAll(): List<DatoBioquimico>
+    }
+    interface GraficoRepository {
+        + findAll(): List<Grafico>
+        + save(grafico: Grafico)
+    }
+    interface GrupoMuestrasRepository {
+        + save(grupoMuestras: GrupoMuestras)
+    }
+    interface MuestraRepository {
+        + save(muestra: Muestra)
+    }
+}
+
+package "com.myproyect.umbrella.rest" {
+    class MuestraResource {}
+}
+
+package "com.myproyect.umbrella.service" {
+    class GraficoService {
+        + getGrafico(id: Long): GraficoDTO
+        + createGrafico(graficoDTO: GraficoDTO): Long
+        + updateGrafico(id: Long, graficoDTO: GraficoDTO)
+        + deleteGrafico(id: Long)
+        + getAllGraficos(): List<GraficoDTO>
+        + procesarGraficosConcurrentemente()
+    }
+    class GrupoMuestraService {
+        + agruparMuestras(muestras: List<DatoBioquimico>): List<GrupoMuestras>
+    }
+    class MuestraFactoryService {}
+    class MuestraService {
+        + getAllMuestras(tipo: String): List<DatoBioquimicoDTO>
+        + procesarYAgruparMuestras()
+    }
+}
+
+GraficoController --> GraficoService
+MuestraController --> MuestraService
+MuestraService --> DatoBioquimico
+MuestraService --> GrupoMuestraService
+GrupoMuestraService --> GrupoMuestras
+GraficoService --> GraficoDTO
+MuestraService --> MuestraDTO
+DatoBioquimicoRepository --> DatoBioquimico
+MuestraRepository --> Muestra
+GrupoMuestrasRepository --> GrupoMuestras
+GraficoRepository --> Grafico
+
+@enduml
