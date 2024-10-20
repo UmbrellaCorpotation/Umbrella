@@ -6,6 +6,8 @@ import com.myproyect.umbrella.repos.*;
 import com.myproyect.umbrella.util.MuestraNotFoundException;
 import com.myproyect.umbrella.service.MuestraFactoryService;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class MuestraService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private final DatoBioquimicoRepository datoBioquimicoRepository;
     private final GrupoMuestrasRepository grupoMuestrasRepository;
@@ -135,8 +140,8 @@ public class MuestraService {
         }
     }
 
-    // Método para procesar todas las muestras concurrentemente y agruparlas
     @Async
+    @Transactional
     public void procesarYAgruparMuestras() {
         // Paso 1: Obtener todas las muestras de la base de datos
         List<DatoBioquimico> muestras = datoBioquimicoRepository.findAll();
@@ -148,8 +153,22 @@ public class MuestraService {
         // Paso 3: Agrupar las muestras en grupos de 50
         List<GrupoMuestras> grupos = agruparMuestras(muestrasProcesadas);
 
-        // Paso 4: Guardar los grupos en la base de datos
-        grupos.forEach(grupoMuestrasRepository::save);
+        // Paso 4: Guardar los grupos en la base de datos asegurándose de que están persistidos
+        for (GrupoMuestras grupo : grupos) {
+            // Primero, guarda el grupo si no está ya persistido
+            if (grupo.getId() == null) {
+                grupoMuestrasRepository.save(grupo);
+            }
+
+            // Luego, asigna el grupo a cada muestra que sea de tipo DatoBioquimico y guarda las muestras actualizadas
+            for (Muestra muestra : grupo.getMuestras()) {
+                if (muestra instanceof DatoBioquimico) {
+                    DatoBioquimico datoBioquimico = (DatoBioquimico) muestra;
+                    datoBioquimico.setGrupoMuestras(grupo); // Asocia el grupo a la muestra
+                    datoBioquimicoRepository.save(datoBioquimico); // Guarda la muestra actualizada
+                }
+            }
+        }
     }
 
     // Tarea recursiva para procesar muestras utilizando ForkJoinTask
@@ -213,7 +232,6 @@ public class MuestraService {
         List<Future<GrupoMuestras>> futures = new ArrayList<>();
 
         for (int i = 0; i < numGrupos; i++) {
-            int index = i;
             int start = i * 50;
             int end = Math.min(start + 50, totalMuestras);
             List<DatoBioquimico> sublist = muestras.subList(start, end);
@@ -221,9 +239,16 @@ public class MuestraService {
             Future<GrupoMuestras> future = executorService.submit(() -> {
                 GrupoMuestras grupo = new GrupoMuestras();
 
-                // Sincronización al agregar muestras al grupo
-                synchronized (grupo) {
-                    sublist.forEach(grupo::addMuestra);
+                // Bloque sincronizado para evitar problemas de concurrencia
+                synchronized (this) {
+                    // Guardar el grupo de muestras antes de asociarlo a las muestras
+                    grupo = grupoMuestrasRepository.save(grupo);
+
+                    // Ahora se pueden asociar las muestras al grupo y guardarlas
+                    for (DatoBioquimico muestra : sublist) {
+                        muestra.setGrupoMuestras(grupo);
+                        datoBioquimicoRepository.save(muestra);
+                    }
                 }
 
                 return grupo;
@@ -232,20 +257,20 @@ public class MuestraService {
             futures.add(future);
         }
 
-        // Recopilar los resultados
+        // Recopilar los resultados de los grupos creados
         for (Future<GrupoMuestras> future : futures) {
             try {
                 grupos.add(future.get());
-            } catch (InterruptedException | ExecutionException e) {
-                Thread.currentThread().interrupt();
-                e.printStackTrace();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();  // Restablece el estado de interrupción del hilo
+                throw new RuntimeException("La tarea fue interrumpida", e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException("Error en la ejecución de la tarea", e);
             }
         }
 
         return grupos;
     }
-
-    // Métodos auxiliares para mapear entre entidades y DTOs
 
     private DatoBioquimicoDTO bioquimicoToDTO(DatoBioquimico muestra) {
         DatoBioquimicoDTO dto = new DatoBioquimicoDTO();
@@ -270,4 +295,18 @@ public class MuestraService {
         muestra.setClassification(dto.getClassification());
         return muestra;
     }
+
+    @Transactional(readOnly = true)
+    public List<DatoBioquimicoDTO> getAll(String tipo) {
+        // Utilizar la fábrica para determinar el repositorio adecuado
+        if ("bioquimico".equalsIgnoreCase(tipo)) {
+            List<DatoBioquimico> muestras = datoBioquimicoRepository.findAll();
+            return muestras.stream()
+                    .map(this::bioquimicoToDTO)
+                    .collect(Collectors.toList());
+        } else {
+            throw new IllegalArgumentException("Tipo de muestra no soportado");
+        }
+    }
+
 }

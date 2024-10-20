@@ -17,8 +17,7 @@ public class GrupoMuestras {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relación con Muestra (uno a muchos)
-    @OneToMany(mappedBy = "grupoMuestras", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "grupoMuestras", cascade = CascadeType.ALL)
     private List<Muestra> muestras = new ArrayList<>();
 
     // Relación con Grafico (uno a muchos)

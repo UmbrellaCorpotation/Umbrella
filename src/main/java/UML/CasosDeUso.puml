@@ -1,0 +1,13 @@
+@startuml
+actor "Usuario" as user
+
+user --> (Crear Gráfico)
+user --> (Actualizar Gráfico)
+user --> (Eliminar Gráfico)
+user --> (Ver Gráfico)
+user --> (Agrupar Muestras)
+user --> (Obtener Muestras)
+
+(Ver Gráfico) --> (Procesar Gráficos)
+
+@enduml
